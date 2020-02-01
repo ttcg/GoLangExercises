@@ -2,14 +2,27 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
-	"github.com/ttcg/GoLangExercies/Api.CostDiary/models"
+	"github.com/ttcg/GoLangExercies/Api.CostDiary/controllers"
+	"github.com/ttcg/GoLangExercies/Api.CostDiary/managers/costtypemgr"
 )
 
 func main() {
-	fmt.Println("hello world")
+	setUpDataSeeding()
 
-	newCostType := models.CostType{123, "thet"}
+	setUpWebServer()
+}
 
-	fmt.Println(newCostType)
+func setUpDataSeeding() {
+	costtypemgr.SeedCostTypesData()
+}
+
+func setUpWebServer() {
+	port := "3000"
+
+	fmt.Println("The webservice can be consumed at http://localhost:" + port)
+
+	controllers.RegisterControllers()
+	http.ListenAndServe(":"+port, nil)
 }

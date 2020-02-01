@@ -1,8 +1,11 @@
 package models
 
-//import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
-type costType struct {
-	ID           UUID
+// CostType : class
+type CostType struct {
+	ID           uuid.UUID
 	CostTypeName string
 }
