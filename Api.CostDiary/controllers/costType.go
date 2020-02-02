@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -59,14 +58,9 @@ func (ctrl *costTypeController) getByID(ID uuid.UUID, w http.ResponseWriter, r *
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		errStr := fmt.Sprint("Could not find a Cost Type: ", ID)
-		writeTextResponse(w, errStr)
+		writeTextResponse(w, err.Error())
 		return
 	}
 
 	encodeResponseAsJSON(costType, w)
-}
-
-func writeTextResponse(w http.ResponseWriter, msg string) {
-	w.Write([]byte(msg))
 }

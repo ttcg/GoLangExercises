@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ttcg/GoLangExercies/Api.CostDiary/controllers"
+	"github.com/ttcg/GoLangExercies/Api.CostDiary/managers/costitemmgr"
 	"github.com/ttcg/GoLangExercies/Api.CostDiary/managers/costtypemgr"
 )
 
@@ -16,6 +17,7 @@ func main() {
 
 func setUpDataSeeding() {
 	costtypemgr.SeedCostTypesData()
+	costitemmgr.SeedCostItemsData()
 }
 
 func setUpWebServer() {
