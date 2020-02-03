@@ -11,10 +11,10 @@ func RegisterControllers() {
 	costTypeCtrl := newCostTypeController()
 	costItemCtrl := newCostItemController()
 
-	http.Handle("/costtype", *costTypeCtrl)
+	http.Handle("/costtypes", *costTypeCtrl)
 	http.Handle("/costtypes/", *costTypeCtrl)
 
-	http.Handle("/costitem", *costItemCtrl)
+	http.Handle("/costitems", *costItemCtrl)
 	http.Handle("/costitems/", *costItemCtrl)
 }
 

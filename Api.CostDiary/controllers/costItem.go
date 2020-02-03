@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/ttcg/GoLangExercies/Api.CostDiary/models"
 
 	"github.com/google/uuid"
 	"github.com/ttcg/GoLangExercies/Api.CostDiary/managers/costitemmgr"
@@ -20,6 +24,8 @@ func (ctrl costItemController) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		switch r.Method {
 		case http.MethodGet:
 			ctrl.getAll(w, r)
+		case http.MethodPost:
+			ctrl.addCostItem(w, r)
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
@@ -37,6 +43,7 @@ func (ctrl costItemController) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		switch r.Method {
 		case http.MethodGet:
 			ctrl.getByID(id, w, r)
+
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
@@ -63,4 +70,37 @@ func (ctrl *costItemController) getByID(ID uuid.UUID, w http.ResponseWriter, r *
 	}
 
 	encodeResponseAsJSON(costType, w)
+}
+
+func (ctrl *costItemController) addCostItem(w http.ResponseWriter, r *http.Request) {
+	costItem, err := ctrl.parseRequest(r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errStr := fmt.Sprint("Could not parse Cost Item Object: ", err)
+		writeTextResponse(w, errStr)
+		return
+	}
+
+	costItem, err = costitemmgr.AddCostItem(costItem)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		writeTextResponse(w, err.Error())
+		return
+	}
+
+	encodeResponseAsJSON(costItem, w)
+}
+
+func (ctrl *costItemController) parseRequest(r *http.Request) (models.CostItem, error) {
+	dec := json.NewDecoder(r.Body)
+	var costItem models.CostItem
+	err := dec.Decode(&costItem)
+
+	if err != nil {
+		return models.CostItem{}, err
+	}
+
+	return costItem, nil
 }

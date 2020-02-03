@@ -1,6 +1,7 @@
 package costitemmgr
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -59,4 +60,14 @@ func GetCostItemByID(id uuid.UUID) (models.CostItem, error) {
 	}
 
 	return models.CostItem{}, fmt.Errorf("The given ID %s not found", id)
+}
+
+// AddCostItem : to add Cost Item
+func AddCostItem(costItem models.CostItem) (models.CostItem, error) {
+	if costItem.ID == uuid.Nil {
+		return models.CostItem{}, errors.New("New Cost Item must have an ID.  Please provide")
+	}
+
+	costItems = append(costItems, &costItem)
+	return costItem, nil
 }
