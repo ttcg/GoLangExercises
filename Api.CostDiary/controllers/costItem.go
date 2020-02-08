@@ -43,7 +43,10 @@ func (ctrl costItemController) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		switch r.Method {
 		case http.MethodGet:
 			ctrl.getByID(id, w, r)
-
+		case http.MethodDelete:
+			ctrl.deleteByID(id, w, r)
+		case http.MethodPut:
+			ctrl.updateByID(id, w, r)
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
@@ -91,6 +94,46 @@ func (ctrl *costItemController) addCostItem(w http.ResponseWriter, r *http.Reque
 	}
 
 	encodeResponseAsJSON(costItem, w)
+}
+
+func (ctrl *costItemController) updateByID(ID uuid.UUID, w http.ResponseWriter, r *http.Request) {
+	costItem, err := ctrl.parseRequest(r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errStr := fmt.Sprint("Could not parse Cost Item Object: ", err)
+		writeTextResponse(w, errStr)
+		return
+	}
+
+	if ID != costItem.ID {
+		w.WriteHeader(http.StatusInternalServerError)
+		writeTextResponse(w, "The Id in URL and ID in body are not the same")
+		return
+	}
+
+	costItem, err = costitemmgr.UpdateCostItem(costItem)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		writeTextResponse(w, err.Error())
+		return
+	}
+
+	encodeResponseAsJSON(costItem, w)
+}
+
+func (ctrl *costItemController) deleteByID(ID uuid.UUID, w http.ResponseWriter, r *http.Request) {
+
+	err := costitemmgr.DeleteCostItem(ID)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		writeTextResponse(w, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (ctrl *costItemController) parseRequest(r *http.Request) (models.CostItem, error) {

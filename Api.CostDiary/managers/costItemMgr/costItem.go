@@ -71,3 +71,34 @@ func AddCostItem(costItem models.CostItem) (models.CostItem, error) {
 	costItems = append(costItems, &costItem)
 	return costItem, nil
 }
+
+// UpdateCostItem : to update Cost Item
+func UpdateCostItem(costItem models.CostItem) (models.CostItem, error) {
+	if costItem.ID == uuid.Nil {
+		return models.CostItem{}, errors.New("ID must not be empty")
+	}
+
+	for i, v := range costItems {
+		if v.ID == costItem.ID {
+			costItems[i] = &costItem
+			return costItem, nil
+		}
+	}
+	return models.CostItem{}, fmt.Errorf("The given ID %s not found", costItem.ID)
+}
+
+// DeleteCostItem : to delete Cost Item
+func DeleteCostItem(ID uuid.UUID) error {
+	if ID == uuid.Nil {
+		return errors.New("ID must not be empty")
+	}
+
+	for i, v := range costItems {
+		if v.ID == ID {
+			costItems = append(costItems[:i], costItems[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("The given ID %s not found", ID)
+}
